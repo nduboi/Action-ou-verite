@@ -1,6 +1,20 @@
 <!DOCTYPE html>
-<html lang="fr">
+<script>
+    function deleteAllCookies() {
+        const cookies = document.cookie.split(";");
 
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i];
+            const eqPos = cookie.indexOf("=");
+            const name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+            document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
+        }
+    }
+    window.onload = function() {
+        deleteAllCookies();
+    }
+</script>
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -12,7 +26,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,800;1,400&display=swap" rel="stylesheet">
 </head>
-
 <body class="bg-gray-100 h-screen w-screen">
     <header class="h-1/6 w-full">
         <div class="flex box h-full bg-red-700">
@@ -33,5 +46,4 @@
         <p class="font-bold row-start-3 col-start-2 col-span-2 flex justify-center items-center">Created by&nbsp<a href="https://github.com/nduboi"> @nduboi</a></p>
     </footer>
 </body>
-
 </html>

@@ -2,24 +2,42 @@ version: '3.0'
 services:
 
   app_js:
-    build: .
+    build: ./app_server
     container_name: app_js
     ports:
       - "80:80"
     volumes:
-      - "./:/app"
+      - "./app_server:/app_app"
     env_file:
       - db_log.env
       - mail.env
       - pma.env
     depends_on:
-      - db
-      - phpmyadmin
+      db:
+        condition: service_healthy
+    networks:
+      - result-tier
+
+  api_js:
+    build: ./api_server
+    container_name: api_js
+    ports:
+      - "8080:8080"
+    volumes:
+      - "./api_server:/app_api"
+    env_file:
+      - db_log.env
+      - mail.env
+      - pma.env
+    depends_on:
+      db:
+        condition: service_healthy
     networks:
       - result-tier
 
   db:
     image: mysql:latest
+    restart: always
     container_name: database
     env_file:
       - db_log.env
@@ -29,6 +47,11 @@ services:
       - db-data:/var/lib/mysql
     networks:
       - result-tier
+    healthcheck:
+      test: "/usr/bin/mysql --user=root --password=password --execute \"SHOW DATABASES;\""
+      interval: 2s
+      timeout: 1s
+      retries: 30
 
   phpmyadmin:
     image: phpmyadmin

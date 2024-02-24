@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    const socket = io();
+    function get_name_choosed_homme(player_homme_selected) {
+        return String(getCookie('userhomme'+player_homme_selected));
+    }
+    function get_name_choosed_femme(player_femme_selected) {
+        return String(getCookie('userfemme'+player_femme_selected));
+    }
+    function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+    }
+    function getnbrrandom(min, max) {
+        return Math.floor(Math.random() * (max - min) + min);
+    }
+    function next_challenge() {
+        const urlParams = new URLSearchParams(window.location.search);
+        var nbr = urlParams.get('question');
+        document.location.href = "/game?question="+ (Number(nbr) + 1)
+    }
+    window.onload = function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        var nbr = urlParams.get('question');
+        if (nbr > 0 && nbr <= 20) {
+            document.getElementById('title').innerHTML = "🔥 Question n°" + nbr + " 🔥";
+        } else {
+            window.location.href = "/"
+        }
+        var nbr_homme = Number(getCookie('nbrhomme'));
+        var nbr_femme = Number(getCookie('nbrfemme'));
+        var random_player = getnbrrandom(1, 3);
+        var name_choosed = null;
+        if (nbr_homme > 0 && nbr_femme > 0) {
+            if (random_player == 1) {
+                if (nbr_homme == 1) {
+                    name_choosed = get_name_choosed_homme(1);
+                } else {
+                    var player_homme_selected = getnbrrandom(1, nbr_homme + 1);
+                    name_choosed = get_name_choosed_homme(player_homme_selected);
+                }
+            }
+            if (random_player == 0) {
+                if (nbr_femme == 1) {
+                    name_choosed = get_name_choosed_femme(1);
+                } else {
+                    var player_homme_selected = getnbrrandom(1, nbr_femme + 1);
+                    name_choosed = get_name_choosed_femme(player_homme_selected);
+                }
+            }
+        } else {
+            if (nbr_homme > 0) {
+                if (nbr_homme == 1) {
+                    name_choosed = get_name_choosed_homme(1);
+                } else {
+                    var player_homme_selected = getnbrrandom(1, nbr_homme + 1);
+                    name_choosed = get_name_choosed_homme(player_homme_selected);
+                }
+            } else {
+                if (nbr_femme > 0) {
+                    if (nbr_femme == 1) {
+                        name_choosed = get_name_choosed_femme(1);
+                    } else {
+                        var player_homme_selected = getnbrrandom(1, nbr_femme + 1);
+                        name_choosed = get_name_choosed_femme(player_homme_selected);
+                    }
+                } else {
+                    window.location.href = "/";
+                }
+            }
+        }
+        if (urlParams.has('type') == false) {
+            document.getElementById('main').innerHTML += '<div class="flex items-center justify-center h-full w-full grid grid-rows-6"><h1 class="flex items-top justify-center row-start-3">Personne choisi : '+name_choosed+'</h1><form method="get" id="form" class="justify-center flex items-center w-full h-full gap-2 row-start-4"> <input type="submit" name="type" class="p-5 textsytle bg-green-500 hover:bg-green-600 rounded-lg" value="action"><p> ou </p><input type="submit" name="type" class="p-5 textsytle bg-red-500 hover:bg-red-600 rounded-lg" value = "veritée" ><input type="hidden" name="name" value="'+name_choosed+'"><input type="hidden" name="question" value="' + nbr + '"></form></div>';
+        } else {
+            if (urlParams.has('name') == true) {
+                document.getElementById('main').innerHTML += '<div class="h-full w-full flex grid grid-cols-4 grid-rows-4"><h1 id="type_prompt" class="font-bold text-xl font-['+"Montserrat"+'] flex justify-center col-span-2 col-start-2 items-center text-black">Voici votre défi : '+ urlParams.get('type') +'</h1><div id="defi_prompt" class="col-span-2 justify-center flex items-end col-start-2 row-span-1 text-md row-start-2">Ceci est le défi qui est peu etre un peu long</div><input type="button" class="row-start-4 col-span-2 col-start-2 m-7 rounded-lg textsytle bg-blue-400 hover:bg-blue-500" onclick="next_challenge()" value="Défi suivant"/></div>';
+            } else {
+                window.location.href = "/";
+            }
+        }
+        socket.on("answer_server :"+token, (info) => {
+            console.log(info[0].value);
+        });
+    }
+</script>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="build/css/main.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,800;1,400&display=swap" rel="stylesheet">
+</head>
+<body class="bg-gray-100 h-screen w-screen">
+    <header class="h-1/6 w-full">
+        <div class="flex box h-full bg-red-700">
+            <h1 id="title">🔥 It's very hot ! 🔥</h1>
+        </div>
+    </header>
+    <main class="h-4/6 w-full" id="main">
+    </main>
+    <footer class="h-1/6 w-full flex">
+        <p class="w-full justify-center flex font-bold items-end">Created by&nbsp
+            <a href="https://github.com/nduboi">@nduboi</a>
+        </p>
+    </footer>
+</body>
+<script>
+    var rand = function() {
+        return Math.random().toString(36).substr(2); // remove `0.`
+    };
+    var token = function() {
+        return rand() + rand(); // to make it longer
+    };
+    var token = token();
+    socket.emit("ask_bdd_challenge", {token : token});
+</script>
+</html>
