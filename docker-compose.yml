@@ -1,0 +1,52 @@
+version: '3.0'
+services:
+
+  app_js:
+    build: .
+    container_name: app_js
+    ports:
+      - "80:80"
+    volumes:
+      - "./:/app"
+    env_file:
+      - db_log.env
+      - mail.env
+      - pma.env
+    depends_on:
+      - db
+      - phpmyadmin
+    networks:
+      - result-tier
+
+  db:
+    image: mysql:latest
+    container_name: database
+    env_file:
+      - db_log.env
+    ports:
+      - "3306"
+    volumes:
+      - db-data:/var/lib/mysql
+    networks:
+      - result-tier
+
+  phpmyadmin:
+    image: phpmyadmin
+    container_name: PHPmyAdmin
+    networks:
+      - result-tier
+    env_file:
+      - pma.env
+    restart: always
+    ports:
+      - 8081:80
+    depends_on:
+      - db
+
+networks:
+  result-tier:
+
+volumes:
+  db-data:
+    driver: local
+

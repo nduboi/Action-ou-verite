@@ -1,0 +1,53 @@
+@font-face {
+    font-family: 'SFProDisplay';
+    src: url('build/font/SFProDisplay-Bold.woff2') format('woff2'),
+        url('build/font/SFProDisplay-Bold.woff') format('woff');
+    font-weight: bold;
+    font-style: swap;
+}
+
+
+body{
+    background-color: #f2f2f2;
+    margin: 0px 0px 0px 0px;
+    padding: 0px 0px 0px 0px;
+    width: 100%;
+    display: block;
+}
+.box{
+    justify-content: center;
+    align-items: center;
+}
+
+
+.box h1#title{
+    font-weight: extra-bold;
+    font-family: 'Montserrat', sans-serif;
+    color: white;
+    font-size: x-large;
+}
+#bd{
+    font-weight: extra-bold;
+    font-family: 'Montserrat', sans-serif;
+    font-size: x-large;
+    color: red;
+}
+.boxrules{
+    left: auto;
+    right: auto;
+}
+
+.textsytle{
+    font-family: 'Montserrat', sans-serif;
+    font-weight: bold;
+    color: white;
+    font-size: large;
+}
+
+.sfstyle{
+    font-family: 'SFProDisplay';
+    font-weight: bold;
+    color: black;
+    font-size: large;
+    
+}
