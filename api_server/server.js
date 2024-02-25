@@ -2,9 +2,28 @@ const express = require('express');
 const http = require('http');
 const mysql = require('mysql2/promise');
 const getenv = require('getenv');
+const nodemailer = require("nodemailer");
 
 const app = express();
 const port = 8080;
+
+var transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: getenv('MAIL_ADRESS'),
+        pass: getenv('MAIL_PASSWORD')
+    }
+});
+
+async function send_verif_mail(email_adress, token) {
+    const info = await transporter.sendMail({
+      from: '"Avnduboi" <noreply@nduboi.com>', // sender address
+      to: email_adress, // list of receivers
+      subject: "Check your account ✔", // Subject line
+      html: `<h1>Hello, to check your account click <a href="https://localhost/check_account&${token}">here</a></h1>`, // html body
+    });
+    // console.log("Message sent: %s", info.messageId);
+}
 
 const db_con = {
     host: getenv('MYSQL_HOST'),
@@ -60,6 +79,31 @@ app.get('/get_user_log', async (req, res) => {
                 }
             }
         }
+    }
+});
+
+app.get('/send_verif_mail', async (req, res) => {
+    const token = req.query.token;
+    const api_token = req.query.api_token
+
+    if (api_token != getenv('API_TOKEN'))
+        return res.status(700).json({status: 'Wrong api token' });
+    if (token === undefined) {
+        return res.status(400).json({status: 'Check the urls parameters' });
+    }
+    try {
+        const connection = await pool.getConnection();
+        const [rows, fields] = await connection.execute('SELECT email FROM users WHERE token = ?', [token]);
+        connection.release();
+        if (Object.keys(rows).length == 1) {
+            send_verif_mail(rows[0].email, token);
+            res.json({status: 'Success'});
+        } else {
+            res.json({status: 'Wrong token'});
+        }
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        res.status(500).json({status: 'Internal server error' });
     }
 });
 

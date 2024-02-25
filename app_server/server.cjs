@@ -1,31 +1,13 @@
 const app = require("express")();
 const http = require("http").createServer(app);
 const io = require("socket.io")(http);
-const nodemailer = require("nodemailer");
 const getenv = require('getenv');
-const mysql = require('mysql2/promise');
 const { json } = require("express");
 var bcrypt = require('bcryptjs');
 import('node-fetch').then(fetch => {
     // Your code that uses fetch
 }).catch(err => {
     // Handle errors
-});
-const db_con = {
-    host: getenv('MYSQL_HOST'),
-    user: getenv('MYSQL_USER'),
-    password: getenv('MYSQL_PASSWORD'),
-    database: getenv('MYSQL_DATABASE'),
-};
-
-const pool = mysql.createPool(db_con);
-
-var transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-        user: getenv('MAIL_ADRESS'),
-        pass: getenv('MAIL_PASSWORD')
-    }
 });
 
 app.get("/", (req, res) => {
@@ -170,6 +152,7 @@ io.on("connection", (socket) => {
                         var hash_token = bcrypt.hashSync(data.token, salt);
                         set_new_user_api(data.email, data.pseudo, hash_pass, hash_token)
                         .then (info => {
+
                             io.emit("anwser_bdd_account :"+data.token, {status : "success", token : hash_token});
                         }).catch(error => {
                             io.emit("anwser_bdd_account :"+data.token, {status : "error", message : "Internal Error"});
