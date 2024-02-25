@@ -6,8 +6,8 @@ services:
     container_name: app_js
     ports:
       - "80:80"
-    # volumes:
-    #   - ./app_server:/app_app
+    volumes:
+      - ./app_server:/app_app
     env_file:
       - db_log.env
       - mail.env
@@ -22,8 +22,8 @@ services:
   api_js:
     build: ./api_server
     container_name: api_js
-    # volumes:
-    #   - ./api_server:/app_api
+    volumes:
+      - ./api_server:/app_api
     ports:
       - "8080:8080"
     env_file:
