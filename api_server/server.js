@@ -93,11 +93,15 @@ app.get('/send_verif_mail', async (req, res) => {
     }
     try {
         const connection = await pool.getConnection();
-        const [rows, fields] = await connection.execute('SELECT email FROM users WHERE token = ?', [token]);
+        const [rows, fields] = await connection.execute('SELECT email, status_verif FROM users WHERE token = ?', [token]);
         connection.release();
         if (Object.keys(rows).length == 1) {
-            send_verif_mail(rows[0].email, token);
-            res.json({status: 'Success'});
+            if (rows[0].status_verif == 0) {
+                send_verif_mail(rows[0].email, token);
+                res.json({status: 'Success'});
+            } else {
+                res.json({status: 'Already check'});
+            }
         } else {
             res.json({status: 'Wrong token'});
         }

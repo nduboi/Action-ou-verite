@@ -73,6 +73,20 @@ async function get_pseudo_from_api_with_token(token) {
     }
 }
 
+async function send_mail_verif(token) {
+    try {
+        const response = await fetch('http://api_js:8080/send_verif_mail?token='+token+'&api_token='+getenv('API_TOKEN'));
+        if (!response.ok) {
+            throw new Error('Failed to fetch data');
+        }
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+
+
 async function get_pseudo_from_api(pseudo) {
     try {
         const response = await fetch('http://api_js:8080/get_user_log?pseudo='+pseudo+'&api_token='+getenv('API_TOKEN'));
@@ -152,10 +166,14 @@ io.on("connection", (socket) => {
                         var hash_token = bcrypt.hashSync(data.token, salt);
                         set_new_user_api(data.email, data.pseudo, hash_pass, hash_token)
                         .then (info => {
-
-                            io.emit("anwser_bdd_account :"+data.token, {status : "success", token : hash_token});
+                            send_mail_verif(hash_token)
+                            .then(into => {
+                                io.emit("anwser_bdd_account :"+data.token, {status : "success", token : hash_token});
+                            }).catch(error => {
+                                io.emit("anwser_bdd_account :"+data.token, {status : "error", message : error});
+                            })
                         }).catch(error => {
-                            io.emit("anwser_bdd_account :"+data.token, {status : "error", message : "Internal Error"});
+                            io.emit("anwser_bdd_account :"+data.token, {status : "error", message : error});
                         });
                     }
                 });
