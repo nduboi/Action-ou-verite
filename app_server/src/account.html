@@ -41,7 +41,7 @@
             if (data.status == "success") {
                 document.getElementById('title').innerHTML = "Bienvenu(e) "+ data.pseudo;
             } else {
-                console.log(data.message);
+                window.location.href = "/login";
             }
         });
     }

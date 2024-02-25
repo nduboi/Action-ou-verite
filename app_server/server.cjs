@@ -143,10 +143,14 @@ io.on("connection", (socket) => {
     socket.on("send_login", (data) => {
         get_user_from_api(data.email)
         .then(info => {
-            if (bcrypt.compareSync(data.password, info[0].password)) {
-                io.emit("result_log :" + data.token, {status : "success", token : info[0].token})
+            if (Object.keys(info).length == 1) {
+                if (bcrypt.compareSync(data.password, info[0].password)) {
+                    io.emit("result_log :" + data.token, {status : "success", token : info[0].token})
+                } else {
+                    io.emit("result_log :" + data.token, {status : "error", message : "Wrong password"})
+                }
             } else {
-                io.emit("result_log :" + data.token, {status : "error", message : "Wrong password"})
+                io.emit("result_log :" + data.token, {status : "error", message : "Wrong login"})
             }
         })
     });
@@ -178,10 +182,10 @@ io.on("connection", (socket) => {
     socket.on("get_info_user", (data) => {
         get_pseudo_from_api_with_token(data.token)
         .then(info => {
-            if (Object.keys(info).length > 0) {
+            if (Object.keys(info).length == 1) {
                 socket.emit("awnser_server_data_user :"+data.token, {status : "success", pseudo : info[0].pseudo})
             } else {
-                socket.emit("awnser_server_data_user :"+data.token, {status : "error", message : "There is two time the same user"})
+                socket.emit("awnser_server_data_user :"+data.token, {status : "error", message : "No users found"})
             }
         })
         .catch(error => {

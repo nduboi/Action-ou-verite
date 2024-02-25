@@ -20,10 +20,9 @@
             <div class="m-2">
                 <input type="text" name="name" id="pseudo" placeholder="Pseudo" class="border border-gray-800 rounded-md pl-2 w-full">
             </div>
-            <p class="text-black hover:text-blue-400 ml-2"><a href="connexion.php">J'ai deja un compte</a></p>
+            <p class="text-black hover:text-blue-400 ml-2"><a href="/login">I have alredy a account</a></p>
             <input type="button" onclick="signup()" class=" text-white font-bold m-1 rounded-sm p-2 bg-blue-500 hover:bg-blue-400" value="S'inscrire" name="connexion" id="connexion" >
         </form>
-        <p id="error" class="text-red-500 text-center p-2 text-md font-bold"></p>
         <script src="/socket.io/socket.io.js"></script>
         <script>
             const socket = io();
@@ -47,7 +46,7 @@
                         sessionStorage.setItem('Token', data.token);
                         window.location.href = "/";
                     } else {
-                        document.getElementById('error').innerHTML = data.message;
+                        document.getElementById('error').innerHTML += `<p id="error" class="text-red-500 text-center p-2 text-md font-bold">${data.message}</p>`;
                     }
                 });
             }

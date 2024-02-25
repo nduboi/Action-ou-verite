@@ -29,7 +29,7 @@ app.get('/get_user_log', async (req, res) => {
     if (mail != undefined) {
         try {
             const connection = await pool.getConnection();
-            const [rows, fields] = await connection.execute('SELECT pseudo, mail FROM users WHERE email = ?', [mail]);
+            const [rows, fields] = await connection.execute('SELECT * FROM users WHERE email = ?', [mail]);
             connection.release();
             res.json(rows);
         } catch (error) {
