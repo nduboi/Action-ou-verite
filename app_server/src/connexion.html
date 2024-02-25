@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="fr">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Login</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <link rel="stylesheet" href="build/css/main.css">
+    </head>
+    <body id="index" class="h-screen w-screen flex justify-center items-center">
+        <div id="pgconnexion" class=" rounded-lg shadow-md">
+            <H1 class="text-center text-black font-bold w-full m-2">Connexion</H1>
+            <form name="logs" class="flex flex-col">
+                <div class="m-2">
+                    <input type="email" name="mail" id="mail" placeholder="Email" class="rounded-sm pl-2 w-full">
+                </div>
+                <div class="m-2">
+                    <input type="password" name="pass" id="pass" placeholder="Mot de passe" class="rounded-sm pl-2 w-full">
+                </div>
+                <p class="text-black hover:text-blue-400 ml-2 "><a href="inscription.php">Crée un compte</a></p>
+                <input type="button" onclick="login()" class=" text-white font-bold m-1 rounded-sm p-2 bg-blue-500 hover:bg-blue-400" value="Se connecter" name="connexion" id="connexion" >
+            </form>
+            <script src="/socket.io/socket.io.js"></script>
+            <script>
+                const socket = io();
+                var token = function() {
+                    return Math.random().toString(36).substr(2) + Math.random().toString(36).substr(2); // remove `0.`
+                };
+                var token = token();
+                function login(){
+                    var password = document.getElementById('pass').value;
+                    var email = document.getElementById('mail').value;
+                    if (email == "" || password == "") {
+                        return;
+                    }
+                    socket.emit("send_login", {token : token, email : email, password : password});
+                }
+                window.onload = function() {
+                    socket.on("result_log :"+token, (data) =>{
+                        if (data.status == "success") {
+                            document.cookie = "token="+data.token+"; path=/";
+                            window.location.href = "/account";
+                        } else {
+                            console.log("error");
+                        }
+                    });
+                }
+            </script>
+        </div>
+    </body>
+</html>

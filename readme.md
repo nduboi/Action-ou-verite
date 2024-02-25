@@ -11,7 +11,7 @@ cd Action-ou-verite
 
 ## How to play ? :desktop_computer:
 
-### You need to create 3 files :
+### You need to create 4 files :
 
 First a file named : mail.env you need to fill with your informations
 ```env
@@ -25,6 +25,12 @@ Second file named : pma.env you need to fill with your informations
 ```env
 PMA_HOST=(database_service) by default db
 PMA_PORT=(database_port) by default 3306
+```
+
+Next file named : api_token.env you need to fill with secured informations
+This token will be use to secured the communication btw the api and the server
+```env
+API_TOKEN=(secure_token)
 ```
 
 Finally file named db_log.env you need to fill with your informations

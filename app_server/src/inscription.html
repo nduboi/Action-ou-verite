@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signup</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body id="inscription" class="h-screen w-screen flex justify-center items-center">
+    <div id="pgconnexion" class=" rounded-lg shadow-md">
+        <H1 class="text-center text-black font-bold w-full m-2">Inscription</H1>
+        <form name="form_signup" class="flex flex-col">
+            <div class="m-2">
+                <input type="email" name="mail" id="mail" placeholder="Email" class="border border-gray-800 rounded-md pl-2 w-full">
+            </div>
+            <div class="m-2">
+                <input type="password" name="pass" id="pass" placeholder="Mot de passe" class="border border-gray-800 rounded-md pl-2 w-full">
+            </div>
+            <div class="m-2">
+                <input type="text" name="name" id="pseudo" placeholder="Pseudo" class="border border-gray-800 rounded-md pl-2 w-full">
+            </div>
+            <p class="text-black hover:text-blue-400 ml-2"><a href="connexion.php">J'ai deja un compte</a></p>
+            <input type="button" onclick="signup()" class=" text-white font-bold m-1 rounded-sm p-2 bg-blue-500 hover:bg-blue-400" value="S'inscrire" name="connexion" id="connexion" >
+        </form>
+        <script src="/socket.io/socket.io.js"></script>
+        <script>
+            const socket = io();
+            var token = function() {
+                return Math.random().toString(36).substr(2) + Math.random().toString(36).substr(2); // remove `0.`
+            };
+            var token = token();
+            var signup = function() {
+                var email = document.getElementById('mail').value;
+                var password = document.getElementById('pass').value;
+                var pseudo = document.getElementById('pseudo').value;
+                if (email != "" && password != "" && pseudo != "") {
+                    socket.emit("create_user", {token : token, email : email, password : password, pseudo : pseudo});
+                } else {
+                    console.log("fill informations");
+                }
+            }
+            window.onload = function () {
+                socket.on("anwser_bdd_account :"+token, (data) => {
+                    if (data.status == "success") {
+                        document.cookie = "token="+data.token+"; path=/";
+                        window.location.href = "/";
+                    } else {
+                        console.log("error");
+                    }
+                });
+            }
+        </script>
+    </div>
+</body>
+<style>
+#inscription{
+    background-image: url("build/img/inscription.jpg");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: center;
+}
+#pgconnexion{
+    background-color: rgba(255,255,255,0.95);
+}
+</style>
+</html>

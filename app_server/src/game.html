@@ -72,7 +72,7 @@
             }
         }
         if (urlParams.has('type') == false) {
-            document.getElementById('main').innerHTML += '<div class="flex items-center justify-center h-full w-full grid grid-rows-6"><h1 class="flex items-top justify-center row-start-3">Personne choisi : '+name_choosed+'</h1><form method="get" id="form" class="justify-center flex items-center w-full h-full gap-2 row-start-4"> <input type="submit" name="type" class="p-5 textsytle bg-green-500 hover:bg-green-600 rounded-lg" value="action"><p> ou </p><input type="submit" name="type" class="p-5 textsytle bg-red-500 hover:bg-red-600 rounded-lg" value = "veritée" ><input type="hidden" name="name" value="'+name_choosed+'"><input type="hidden" name="question" value="' + nbr + '"></form></div>';
+            document.getElementById('main').innerHTML += '<div class="flex items-center justify-center h-full w-full grid grid-rows-6"><h1 class="flex items-top justify-center row-start-3">Personne choisi : '+name_choosed+'</h1><form method="get" id="form" class="justify-center flex items-center w-full h-full gap-2 row-start-4"> <input type="submit" name="type" class="p-5 textsytle bg-green-500 hover:bg-green-600 rounded-lg" value="action"><p> ou </p><input type="submit" name="type" class="p-5 textsytle bg-red-500 hover:bg-red-600 rounded-lg" value = "veritee" ><input type="hidden" name="name" value="'+name_choosed+'"><input type="hidden" name="question" value="' + nbr + '"></form></div>';
         } else {
             if (urlParams.has('name') == true) {
                 document.getElementById('main').innerHTML += '<div class="h-full w-full flex grid grid-cols-4 grid-rows-4"><h1 id="type_prompt" class="font-bold text-xl font-['+"Montserrat"+'] flex justify-center col-span-2 col-start-2 items-center text-black">Voici votre défi : '+ urlParams.get('type') +'</h1><div id="defi_prompt" class="col-span-2 justify-center flex items-end col-start-2 row-span-1 text-md row-start-2">Ceci est le défi qui est peu etre un peu long</div><input type="button" class="row-start-4 col-span-2 col-start-2 m-7 rounded-lg textsytle bg-blue-400 hover:bg-blue-500" onclick="next_challenge()" value="Défi suivant"/></div>';
@@ -81,7 +81,10 @@
             }
         }
         socket.on("answer_server :"+token, (info) => {
-            console.log(info[0].value);
+            var len_info = info.length;
+            var quest_chose = getnbrrandom(0, len_info);
+            console.log(quest_chose);
+            document.getElementById('defi_prompt').innerHTML = info[quest_chose].value;
         });
     }
 </script>
@@ -112,13 +115,14 @@
     </footer>
 </body>
 <script>
-    var rand = function() {
-        return Math.random().toString(36).substr(2); // remove `0.`
-    };
     var token = function() {
-        return rand() + rand(); // to make it longer
+        return Math.random().toString(36).substr(2) + Math.random().toString(36).substr(2); // remove `0.`
     };
     var token = token();
-    socket.emit("ask_bdd_challenge", {token : token});
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has('type') == true) {
+        var type_challenge = urlParams.get('type');
+        socket.emit("ask_bdd_challenge", {token : token, type : type_challenge});
+    }
 </script>
 </html>

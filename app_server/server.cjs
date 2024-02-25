@@ -5,6 +5,7 @@ const nodemailer = require("nodemailer");
 const getenv = require('getenv');
 const mysql = require('mysql2/promise');
 const { json } = require("express");
+var bcrypt = require('bcryptjs');
 import('node-fetch').then(fetch => {
     // Your code that uses fetch
 }).catch(err => {
@@ -35,7 +36,19 @@ app.get("/player", (req, res) => {
     res.sendFile(__dirname + "/src/choose_player.html");
 })
 
+app.get("/login", (req, res) => {
+    res.sendFile(__dirname + "/src/connexion.html");
+})
+
+app.get("/signup", (req, res) => {
+    res.sendFile(__dirname + "/src/inscription.html");
+})
+
 app.get("/game", (req, res) => {
+    res.sendFile(__dirname + "/src/game.html");
+})
+
+app.get("/account", (req, res) => {
     res.sendFile(__dirname + "/src/game.html");
 })
 
@@ -48,9 +61,9 @@ app.get("/build/css/main.css", (req, res) => {
     res.sendFile(__dirname + "/src/build/css/main.css");
 })
 
-async function get_user_from_api() {
+async function get_user_from_api(mail) {
     try {
-        const response = await fetch('http://api_js:8080/get_all_user');
+        const response = await fetch('http://api_js:8080/get_user_log?mail='+mail+'&api_token='+getenv('API_TOKEN'));
         if (!response.ok) {
             throw new Error('Failed to fetch data');
         }
@@ -61,9 +74,22 @@ async function get_user_from_api() {
     }
 }
 
-async function get_challenge_from_api() {
+async function get_challenge_from_api(type) {
     try {
-        const response = await fetch('http://api_js:8080/get_all_challenge');
+        const response = await fetch('http://api_js:8080/get_all_challenge?type='+type+'&api_token='+getenv('API_TOKEN'));
+        if (!response.ok) {
+            throw new Error('Failed to fetch data');
+        }
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+
+async function set_new_user_api(email, pseudo, password, token) {
+    try {
+        const response = await fetch('http://api_js:8080/set_new_user_log?email='+email+'&pseudo='+pseudo+'&password='+password+'&token='+token+'&api_token='+getenv('API_TOKEN'));
         if (!response.ok) {
             throw new Error('Failed to fetch data');
         }
@@ -76,20 +102,43 @@ async function get_challenge_from_api() {
 
 io.on("connection", (socket) => {
     socket.on("ask_bdd_challenge", (info) => {
-        get_challenge_from_api()
+        get_challenge_from_api(info.type)
         .then(data => {
-            console.log(data);
-            console.log(Object.keys(data).length);
             io.emit("answer_server :"+info.token, data);
         })
         .catch(error => {
             console.error('Error fetching data:', error);
         });
     })
+    socket.on("send_login", (data) => {
+        get_user_from_api(data.email)
+        .then(info => {
+            if (bcrypt.compareSync(data.password, info[0].password)) {
+                io.emit("result_log :" + data.token, {status : "success", token : info[0].token})
+            } else {
+                io.emit("result_log :" + data.token, {status : "error"})
+            }
+        })
+    });
+    socket.on("create_user", (data) => {
+        get_user_from_api(data.email)
+        .then(info => {
+            if (Object.keys(info).length > 0) {
+                io.emit("anwser_bdd_account :"+data.token, {status : "error"});
+            }
+        });
+        var salt = bcrypt.genSaltSync(10);
+        var hash_pass = bcrypt.hashSync(data.password, salt);
+        var hash_token = bcrypt.hashSync(data.token, salt);
+        set_new_user_api(data.email, data.pseudo, hash_pass, hash_token)
+        .then (info => {
+            io.emit("anwser_bdd_account :"+data.token, {status : "success", token : hash_token});
+        })
+    })
 })
 
 var port = 80;
 
 http.listen(port, () => {
-    console.log("Serveur OK");
+    console.log(`APP server is running on port ${port}`);
 })

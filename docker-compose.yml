@@ -12,6 +12,7 @@ services:
       - db_log.env
       - mail.env
       - pma.env
+      - api_token.env
     depends_on:
       db:
         condition: service_healthy
@@ -29,6 +30,7 @@ services:
       - db_log.env
       - mail.env
       - pma.env
+      - api_token.env
     depends_on:
       db:
         condition: service_healthy
