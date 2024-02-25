@@ -44,7 +44,7 @@
             window.onload = function () {
                 socket.on("anwser_bdd_account :"+token, (data) => {
                     if (data.status == "success") {
-                        document.cookie = "token="+data.token+"; path=/";
+                        sessionStorage.setItem('Token', data.token);
                         window.location.href = "/";
                     } else {
                         document.getElementById('error').innerHTML = data.message;

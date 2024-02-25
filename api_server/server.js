@@ -17,21 +17,49 @@ const pool = mysql.createPool(db_con);
 
 app.get('/get_user_log', async (req, res) => {
     const mail = req.query.mail;
-    const api_token = req.query.api_token
+    const pseudo = req.query.pseudo;
+    const user_token = req.query.token;
+    const api_token = req.query.api_token;
+
     if (api_token != getenv('API_TOKEN'))
         return res.status(700).json({ error: 'Wrong api token' });
-    if (mail === undefined) {
+    if (mail === undefined && pseudo === undefined && user_token === undefined) {
         return res.status(400).json({ error: 'Check the urls parameters' });
     }
-
-    try {
-        const connection = await pool.getConnection();
-        const [rows, fields] = await connection.execute('SELECT * FROM users WHERE email = ?', [mail]);
-        connection.release();
-        res.json(rows);
-    } catch (error) {
-        console.error('Error fetching data:', error);
-        res.status(500).json({ error: 'Internal server error' });
+    if (mail != undefined) {
+        try {
+            const connection = await pool.getConnection();
+            const [rows, fields] = await connection.execute('SELECT pseudo, mail FROM users WHERE email = ?', [mail]);
+            connection.release();
+            res.json(rows);
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            res.status(500).json({ error: 'Internal server error' });
+        }
+    } else {
+        if (pseudo != undefined) {
+            try {
+                const connection = await pool.getConnection();
+                const [rows, fields] = await connection.execute('SELECT pseudo, email FROM users WHERE pseudo = ?', [pseudo]);
+                connection.release();
+                res.json(rows);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                res.status(500).json({ error: 'Internal server error' });
+            }
+        } else {
+            if (user_token != undefined) {
+                try {
+                    const connection = await pool.getConnection();
+                    const [rows, fields] = await connection.execute('SELECT pseudo, email FROM users WHERE token = ?', [user_token]);
+                    connection.release();
+                    res.json(rows);
+                } catch (error) {
+                    console.error('Error fetching data:', error);
+                    res.status(500).json({ error: 'Internal server error <3' });
+                }
+            }
+        }
     }
 });
 

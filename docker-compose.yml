@@ -6,8 +6,6 @@ services:
     container_name: app_js
     ports:
       - "80:80"
-    volumes:
-      - "./app_server:/app_app"
     env_file:
       - db_log.env
       - mail.env
@@ -24,8 +22,6 @@ services:
     container_name: api_js
     ports:
       - "8080:8080"
-    volumes:
-      - "./api_server:/app_api"
     env_file:
       - db_log.env
       - mail.env
@@ -46,6 +42,7 @@ services:
     ports:
       - "3306"
     volumes:
+      - ./data_table.sql:/docker-entrypoint-initdb.d/setup.sql
       - db-data:/var/lib/mysql
     networks:
       - result-tier

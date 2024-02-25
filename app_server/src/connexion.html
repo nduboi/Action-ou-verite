@@ -39,7 +39,7 @@
                 window.onload = function() {
                     socket.on("result_log :"+token, (data) =>{
                         if (data.status == "success") {
-                            document.cookie = "token="+data.token+"; path=/";
+                            sessionStorage.setItem('Token', data.token);
                             window.location.href = "/account";
                         } else {
                             console.log("error");

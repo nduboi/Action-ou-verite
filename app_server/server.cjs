@@ -40,6 +40,10 @@ app.get("/login", (req, res) => {
     res.sendFile(__dirname + "/src/connexion.html");
 })
 
+app.get("/rules", (req, res) => {
+    res.sendFile(__dirname + "/src/rules.html");
+})
+
 app.get("/signup", (req, res) => {
     res.sendFile(__dirname + "/src/inscription.html");
 })
@@ -49,7 +53,7 @@ app.get("/game", (req, res) => {
 })
 
 app.get("/account", (req, res) => {
-    res.sendFile(__dirname + "/src/game.html");
+    res.sendFile(__dirname + "/src/account.html");
 })
 
 app.get("/rules", (req, res) => {
@@ -64,6 +68,32 @@ app.get("/build/css/main.css", (req, res) => {
 async function get_user_from_api(mail) {
     try {
         const response = await fetch('http://api_js:8080/get_user_log?mail='+mail+'&api_token='+getenv('API_TOKEN'));
+        if (!response.ok) {
+            throw new Error('Failed to fetch data');
+        }
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+
+async function get_pseudo_from_api_with_token(token) {
+    try {
+        const response = await fetch('http://api_js:8080/get_user_log?token='+token+'&api_token='+getenv('API_TOKEN'));
+        if (!response.ok) {
+            throw new Error('Failed to fetch data');
+        }
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+
+async function get_pseudo_from_api(pseudo) {
+    try {
+        const response = await fetch('http://api_js:8080/get_user_log?pseudo='+pseudo+'&api_token='+getenv('API_TOKEN'));
         if (!response.ok) {
             throw new Error('Failed to fetch data');
         }
@@ -124,18 +154,38 @@ io.on("connection", (socket) => {
         get_user_from_api(data.email)
         .then(info => {
             if (Object.keys(info).length > 0) {
-                io.emit("anwser_bdd_account :"+data.token, {status : "error", message : "A user alredy exist"});
+                io.emit("anwser_bdd_account :"+data.token, {status : "error", message : "This email alredy exist"});
             } else {
-                var salt = bcrypt.genSaltSync(10);
-                var hash_pass = bcrypt.hashSync(data.password, salt);
-                var hash_token = bcrypt.hashSync(data.token, salt);
-                set_new_user_api(data.email, data.pseudo, hash_pass, hash_token)
-                .then (info => {
-                    io.emit("anwser_bdd_account :"+data.token, {status : "success", token : hash_token});
-                }).catch(error => {
-                    io.emit("anwser_bdd_account :"+data.token, {status : "error", message : "Internal Error"});
+                get_pseudo_from_api(data.pseudo)
+                .then(info => {
+                    if (Object.keys(info).length > 0) {
+                        io.emit("anwser_bdd_account :"+data.token, {status : "error", message : "This pseudo alredy exist"});
+                    } else {
+                        var salt = bcrypt.genSaltSync(10);
+                        var hash_pass = bcrypt.hashSync(data.password, salt);
+                        var hash_token = bcrypt.hashSync(data.token, salt);
+                        set_new_user_api(data.email, data.pseudo, hash_pass, hash_token)
+                        .then (info => {
+                            io.emit("anwser_bdd_account :"+data.token, {status : "success", token : hash_token});
+                        }).catch(error => {
+                            io.emit("anwser_bdd_account :"+data.token, {status : "error", message : "Internal Error"});
+                        });
+                    }
                 });
             }
+        });
+    })
+    socket.on("get_info_user", (data) => {
+        get_pseudo_from_api_with_token(data.token)
+        .then(info => {
+            if (Object.keys(info).length > 0) {
+                socket.emit("awnser_server_data_user :"+data.token, {status : "success", pseudo : info[0].pseudo})
+            } else {
+                socket.emit("awnser_server_data_user :"+data.token, {status : "error", message : "There is two time the same user"})
+            }
+        })
+        .catch(error => {
+            socket.emit("awnser_server_data_user :"+data.token, {status : "error", message : "There is a error with the data"})
         });
     })
 })
