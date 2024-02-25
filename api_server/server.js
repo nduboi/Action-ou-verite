@@ -57,7 +57,7 @@ app.get('/get_all_challenge', async (req, res) => {
 
 app.get('/set_new_user_log', async (req, res) => {
     const email = req.query.email;
-    const pseudo = req.query.email;
+    const pseudo = req.query.pseudo;
     const token = req.query.token;
     const password = req.query.password;
     const api_token = req.query.api_token

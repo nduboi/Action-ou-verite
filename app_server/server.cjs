@@ -116,7 +116,7 @@ io.on("connection", (socket) => {
             if (bcrypt.compareSync(data.password, info[0].password)) {
                 io.emit("result_log :" + data.token, {status : "success", token : info[0].token})
             } else {
-                io.emit("result_log :" + data.token, {status : "error"})
+                io.emit("result_log :" + data.token, {status : "error", message : "Wrong password"})
             }
         })
     });
@@ -124,16 +124,19 @@ io.on("connection", (socket) => {
         get_user_from_api(data.email)
         .then(info => {
             if (Object.keys(info).length > 0) {
-                io.emit("anwser_bdd_account :"+data.token, {status : "error"});
+                io.emit("anwser_bdd_account :"+data.token, {status : "error", message : "A user alredy exist"});
+            } else {
+                var salt = bcrypt.genSaltSync(10);
+                var hash_pass = bcrypt.hashSync(data.password, salt);
+                var hash_token = bcrypt.hashSync(data.token, salt);
+                set_new_user_api(data.email, data.pseudo, hash_pass, hash_token)
+                .then (info => {
+                    io.emit("anwser_bdd_account :"+data.token, {status : "success", token : hash_token});
+                }).catch(error => {
+                    io.emit("anwser_bdd_account :"+data.token, {status : "error", message : "Internal Error"});
+                });
             }
         });
-        var salt = bcrypt.genSaltSync(10);
-        var hash_pass = bcrypt.hashSync(data.password, salt);
-        var hash_token = bcrypt.hashSync(data.token, salt);
-        set_new_user_api(data.email, data.pseudo, hash_pass, hash_token)
-        .then (info => {
-            io.emit("anwser_bdd_account :"+data.token, {status : "success", token : hash_token});
-        })
     })
 })
 

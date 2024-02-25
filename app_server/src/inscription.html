@@ -23,6 +23,7 @@
             <p class="text-black hover:text-blue-400 ml-2"><a href="connexion.php">J'ai deja un compte</a></p>
             <input type="button" onclick="signup()" class=" text-white font-bold m-1 rounded-sm p-2 bg-blue-500 hover:bg-blue-400" value="S'inscrire" name="connexion" id="connexion" >
         </form>
+        <p id="error" class="text-red-500 text-center p-2 text-md font-bold"></p>
         <script src="/socket.io/socket.io.js"></script>
         <script>
             const socket = io();
@@ -37,7 +38,7 @@
                 if (email != "" && password != "" && pseudo != "") {
                     socket.emit("create_user", {token : token, email : email, password : password, pseudo : pseudo});
                 } else {
-                    console.log("fill informations");
+                    document.getElementById('error').innerHTML = "Fill all inputs";
                 }
             }
             window.onload = function () {
@@ -46,7 +47,7 @@
                         document.cookie = "token="+data.token+"; path=/";
                         window.location.href = "/";
                     } else {
-                        console.log("error");
+                        document.getElementById('error').innerHTML = data.message;
                     }
                 });
             }
