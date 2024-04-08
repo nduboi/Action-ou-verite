@@ -34,7 +34,7 @@
     if (token) {
         socket.emit("get_info_user", {token : token})
     } else {
-        window.location.href = "/";
+        window.location.href = "/login";
     }
     window.onload = function() {
         socket.on("awnser_server_data_user :"+token, (data) => {
