@@ -51,7 +51,7 @@ services:
     networks:
       - result-tier
     healthcheck:
-      test: "/usr/bin/mysql --user=root --password=password --execute \"SHOW DATABASES;\""
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
       interval: 2s
       timeout: 1s
       retries: 30
