@@ -7,7 +7,7 @@ services:
     ports:
       - "80:80"
     volumes:
-      - ./app_server/src:/app_app/src
+      - ./app_server:/app_app
     env_file:
       - db_log.env
       - mail.env
@@ -22,8 +22,8 @@ services:
   api_js:
     build: ./api_server
     container_name: api_js
-    # volumes:
-    #   - ./api_server:/app_api
+    volumes:
+      - ./api_server:/app_api
     ports:
       - "8080:8080"
     env_file:
@@ -67,7 +67,8 @@ services:
     ports:
       - 8081:80
     depends_on:
-      - db
+      db:
+        condition: service_healthy
 
 networks:
   result-tier:

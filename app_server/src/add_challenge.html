@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add challenge</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="build/css/main.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,800;1,400&display=swap" rel="stylesheet">
+</head>
+<body class="bg-gray-100 h-screen w-screen">
+    <header class="h-1/6 w-full">
+        <div class="flex box h-full bg-red-700">
+            <h1 id="title" class="">Ajout de challenge</h1>
+        </div>
+    </header>
+    <main class="h-4/6 w-full pt-5">
+        <div class="h-full w-full flex flex-col grid grid-rows-3 grid-cols-3">
+            <div class="bg-white m-5 shadow-md col-start-2 row-start-1 flex flex-col p-7 justify-center items-center  rounded-lg">
+                <div class="p-2">
+                    <input type="radio" name="av" id="action" value="1" checked>
+                    <label for="action">Action</label>
+                </div>
+                <div class="p-2">
+                    <input type="radio" name="av" id="verite" value="2">
+                    <label for="verite">Verité</label>
+                </div>
+            </div>
+            <div class="bg-white m-5 rounded-lg shadow-md col-start-2 row-start-2 flex flex-col justify-center items-center">
+                <p class="text-center pb-5 textsytle text-black ">Votre challenge</p>
+                <input type="text" name="defi" id="defi" class="text-center" placeholder="Votre défi">
+            </div>
+            <div class="bg-blue-500 m-5 text textsytle rounded-lg shadow-md col-start-2 row-start-3 flex justify-center items-center">
+                <button onclick="send_data()">Valider</button>
+            </div>
+        </div>
+    </main>
+    <footer class="h-1/6 w-full flex grid grid-rows-2 grid-cols-1">
+        <div id="confirmation" class="flex justify-center items-center">
+        </div>
+        <p class="w-full justify-center flex font-bold items-end">Created by&nbsp
+            <a href="https://github.com/nduboi">@nduboi</a>
+        </p>
+    </footer>
+</body>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+        var token = sessionStorage.getItem('Token');
+
+        if (token) {
+            socket.emit("get_info_user", {token : token})
+        } else {
+            window.location.href = "/login";
+        }
+        function send_data(){
+            var choice = document.querySelector('input[name="av"]:checked').value;
+            var txt = document.getElementById('defi').value;
+            document.getElementById('defi').value = "";
+            console.log(txt);
+            if ((typeof txt === "string" && txt.length === 0) || txt == null) {
+                document.getElementById('confirmation').innerHTML = "<p class=\"text-red-400 text-xl font-bold\">Challenge vide !</p>"
+            }
+            else {
+                socket.emit("send_data_add_challenge", {type : choice, defi : txt, token : token});
+            }
+        }
+        window.onload = function() {
+            socket.on("awnser_server_data_challenge :"+token, (data) => {
+                if (data.status == "success") {
+                    document.getElementById('confirmation').innerHTML = "<p class=\"text-green-400 text-xl font-bold\">Challenge created !</p>"
+                } else {
+                    document.getElementById('confirmation').innerHTML = "<p class=\"text-red-400 text-xl font-bold\">Error</p>"
+                }
+            });
+        }
+    </script>
+</html>

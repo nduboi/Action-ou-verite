@@ -17,12 +17,11 @@ var transporter = nodemailer.createTransport({
 
 async function send_verif_mail(email_adress, token) {
     const info = await transporter.sendMail({
-      from: '"Avnduboi" <noreply@nduboi.com>', // sender address
-      to: email_adress, // list of receivers
-      subject: "Check your account ✔", // Subject line
-      html: `<h1>Hello, to check your account click <a href="https://localhost/check_account&${token}">here</a></h1>`, // html body
+      from: '"Avnduboi" <noreply@nduboi.com>',
+      to: email_adress,
+      subject: "Check your account ✔",
+      html: `<h1>Hello, to check your account click <a href="http://localhost/check_account&${token}">here</a></h1>`,
     });
-    // console.log("Message sent: %s", info.messageId);
 }
 
 const db_con = {
@@ -146,6 +145,34 @@ app.get('/set_new_user_log', async (req, res) => {
     try {
         const connection = await pool.getConnection();
         const [rows, fields] = await connection.execute('INSERT INTO `users`(`email`, `pseudo`, `password`, `token`) VALUES (?, ?, ?, ?)', [email, pseudo, password, token]);
+        connection.release();
+        res.json(rows);
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+app.get('/set_challenge', async (req, res) => {
+    const defi = req.query.defi;
+    var defi_type = "nothing"
+    const type = req.query.type;
+    const token = req.query.token;
+    const api_token = req.query.api_token
+    if (api_token != getenv('API_TOKEN'))
+        return res.status(700).json({ error: 'Wrong api token' });
+    if ((defi === undefined || type === undefined || token === undefined) && (type != 1 && type != 2)) {
+        return res.status(400).json({ error: 'Check the urls parameters' });
+    }
+
+    if (type == 1) {
+        defi_type = "action"
+    } else {
+        defi_type = "veritee"
+    }
+    try {
+        const connection = await pool.getConnection();
+        const [rows, fields] = await connection.execute('INSERT INTO `challenge`(`TYPE`, `value`) VALUES (?, ?)', [defi_type, defi]);
         connection.release();
         res.json(rows);
     } catch (error) {

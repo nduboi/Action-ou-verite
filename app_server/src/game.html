@@ -72,10 +72,15 @@
             }
         }
         if (urlParams.has('type') == false) {
-            document.getElementById('main').innerHTML += '<div class="flex items-center justify-center h-full w-full grid grid-rows-6"><h1 class="flex items-top justify-center row-start-3">Personne choisi : '+name_choosed+'</h1><form method="get" id="form" class="justify-center flex items-center w-full h-full gap-2 row-start-4"> <input type="submit" name="type" class="p-5 textsytle bg-green-500 hover:bg-green-600 rounded-lg" value="action"><p> ou </p><input type="submit" name="type" class="p-5 textsytle bg-red-500 hover:bg-red-600 rounded-lg" value = "veritee" ><input type="hidden" name="name" value="'+name_choosed+'"><input type="hidden" name="question" value="' + nbr + '"></form></div>';
+            document.getElementById('main').innerHTML += '<div class="flex items-center justify-center h-full w-full grid grid-rows-6"><h1 class="flex items-top justify-center row-start-3">Personne choisi : '+name_choosed+'</h1><form method="get" id="form" class="justify-center flex items-center w-full h-full gap-2 row-start-4"> <input type="submit" name="type" class="p-5 textsytle bg-green-500 hover:bg-green-600 rounded-lg" value="action"><p> ou </p><input type="submit" name="type" class="p-5 textsytle bg-red-500 hover:bg-red-600 rounded-lg" value = "verité" ><input type="hidden" name="name" value="'+name_choosed+'"><input type="hidden" name="question" value="' + nbr + '"></form></div>';
         } else {
             if (urlParams.has('name') == true) {
-                document.getElementById('main').innerHTML += '<div class="h-full w-full flex grid grid-cols-4 grid-rows-4"><h1 id="type_prompt" class="font-bold text-xl font-['+"Montserrat"+'] flex justify-center col-span-2 col-start-2 items-center text-black">Voici votre défi : '+ urlParams.get('type') +'</h1><div id="defi_prompt" class="col-span-2 justify-center flex items-end col-start-2 row-span-1 text-md row-start-2">Oup\'s il n\'y a rien ici !</div><input type="button" class="row-start-4 col-span-2 col-start-2 m-7 rounded-lg textsytle bg-blue-400 hover:bg-blue-500" onclick="next_challenge()" value="Défi suivant"/></div>';
+                var text = "";
+                if (urlParams.get('type') == "verité")
+                    text = "Verité";
+                if (urlParams.get('type') == "action")
+                    text = "Action";
+                document.getElementById('main').innerHTML += '<div class="h-full w-full flex grid grid-cols-4 grid-rows-4"><h1 id="type_prompt" class="font-bold text-xl font-['+"Montserrat"+'] flex justify-center col-span-2 col-start-2 items-center text-black">Voici votre défi : '+ text +'</h1><div id="defi_prompt" class="col-span-2 justify-center flex items-end col-start-2 row-span-1 text-md row-start-2">Oup\'s il n\'y a rien ici !</div><input type="button" class="row-start-4 col-span-2 col-start-2 m-7 rounded-lg textsytle bg-blue-400 hover:bg-blue-500" onclick="next_challenge()" value="Défi suivant"/></div>';
             } else {
                 window.location.href = "/";
             }
@@ -121,7 +126,12 @@
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.has('type') == true) {
         var type_challenge = urlParams.get('type');
-        socket.emit("ask_bdd_challenge", {token : token, type : type_challenge});
+        var text_obj = ""
+        if (type_challenge == "verité")
+            text_obj = "veritee"
+        if (type_challenge == "action")
+            text_obj = "action"
+        socket.emit("ask_bdd_challenge", {token : token, type : text_obj});
     }
 </script>
 </html>

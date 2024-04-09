@@ -26,6 +26,10 @@ app.get("/rules", (req, res) => {
     res.sendFile(__dirname + "/src/rules.html");
 })
 
+app.get("/add_challenge", (req, res) => {
+    res.sendFile(__dirname + "/src/add_challenge.html");
+})
+
 app.get("/signup", (req, res) => {
     res.sendFile(__dirname + "/src/inscription.html");
 })
@@ -36,10 +40,6 @@ app.get("/game", (req, res) => {
 
 app.get("/account", (req, res) => {
     res.sendFile(__dirname + "/src/account.html");
-})
-
-app.get("/rules", (req, res) => {
-    res.sendFile(__dirname + "/src/rules.html");
 })
 
 
@@ -86,7 +86,6 @@ async function send_mail_verif(token) {
     }
 }
 
-
 async function get_pseudo_from_api(pseudo) {
     try {
         const response = await fetch('http://api_js:8080/get_user_log?pseudo='+pseudo+'&api_token='+getenv('API_TOKEN'));
@@ -126,6 +125,19 @@ async function set_new_user_api(email, pseudo, password, token) {
     }
 }
 
+async function set_new_challenge_api(defi, type, token) {
+    try {
+        const response = await fetch('http://api_js:8080/set_challenge?defi='+defi+'&type='+type+'&token='+token+'&api_token='+getenv('API_TOKEN'));
+        if (!response.ok) {
+            throw new Error('Failed to fetch data');
+        }
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+
 io.on("connection", (socket) => {
     socket.on("ask_bdd_challenge", (info) => {
         get_challenge_from_api(info.type)
@@ -135,7 +147,7 @@ io.on("connection", (socket) => {
         .catch(error => {
             console.error('Error fetching data:', error);
         });
-    })
+    });
     socket.on("send_login", (data) => {
         get_user_from_api(data.email)
         .then(info => {
@@ -179,7 +191,7 @@ io.on("connection", (socket) => {
                 });
             }
         });
-    })
+    });
     socket.on("get_info_user", (data) => {
         get_pseudo_from_api_with_token(data.token)
         .then(info => {
@@ -192,7 +204,18 @@ io.on("connection", (socket) => {
         .catch(error => {
             socket.emit("awnser_server_data_user :"+data.token, {status : "error", message : "There is a error with the data"})
         });
-    })
+    });
+    socket.on("send_data_add_challenge", (data) => {
+        if (data.defi.length > 3) {
+            set_new_challenge_api(data.defi, data.type, data.token)
+            .then(info => {
+                socket.emit("awnser_server_data_challenge :"+data.token, {status : "success"})
+            })
+            .catch(error => {
+                socket.emit("awnser_server_data_challenge :"+data.token, {status : "error", message : "There is a error with the data"})
+            });
+        }
+    });
 })
 
 var port = 80;
