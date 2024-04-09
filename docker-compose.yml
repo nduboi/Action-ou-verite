@@ -5,7 +5,7 @@ services:
     build: ./app_server
     container_name: app_js
     ports:
-      - "80:80"
+      - "8083:80"
     volumes:
       - ./app_server:/app_app
     env_file:
