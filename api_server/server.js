@@ -15,12 +15,12 @@ var transporter = nodemailer.createTransport({
     }
 });
 
-async function send_verif_mail(email_adress, token) {
+async function send_verif_mail(email_adress, token, url) {
     const info = await transporter.sendMail({
-      from: '"Avnduboi" <noreply@nduboi.com>',
-      to: email_adress,
-      subject: "Check your account ✔",
-      html: `<h1>Hello, to check your account click <a href="http://localhost/check_account&${token}">here</a></h1>`,
+        from: '"Avnduboi" <noreply@nduboi.com>',
+        to: email_adress,
+        subject: "Check your account ✔",
+        html: `<h1>Hello, to check your account click <a href="http://${url}/check_account?token=${token}">here</a></h1>`,
     });
 }
 
@@ -58,7 +58,7 @@ app.get('/get_user_log', async (req, res) => {
         if (pseudo != undefined) {
             try {
                 const connection = await pool.getConnection();
-                const [rows, fields] = await connection.execute('SELECT pseudo, email FROM users WHERE pseudo = ?', [pseudo]);
+                const [rows, fields] = await connection.execute('SELECT pseudo, email, id, status_verif FROM users WHERE pseudo = ?', [pseudo]);
                 connection.release();
                 res.json(rows);
             } catch (error) {
@@ -69,7 +69,7 @@ app.get('/get_user_log', async (req, res) => {
             if (user_token != undefined) {
                 try {
                     const connection = await pool.getConnection();
-                    const [rows, fields] = await connection.execute('SELECT pseudo, email FROM users WHERE token = ?', [user_token]);
+                    const [rows, fields] = await connection.execute('SELECT pseudo, email, id, status_verif FROM users WHERE token = ?', [user_token]);
                     connection.release();
                     res.json(rows);
                 } catch (error) {
@@ -83,11 +83,12 @@ app.get('/get_user_log', async (req, res) => {
 
 app.get('/send_verif_mail', async (req, res) => {
     const token = req.query.token;
+    const url = req.query.server;
     const api_token = req.query.api_token
 
     if (api_token != getenv('API_TOKEN'))
         return res.status(700).json({status: 'Wrong api token' });
-    if (token === undefined) {
+    if (token === undefined || url === undefined) {
         return res.status(400).json({status: 'Check the urls parameters' });
     }
     try {
@@ -96,7 +97,7 @@ app.get('/send_verif_mail', async (req, res) => {
         connection.release();
         if (Object.keys(rows).length == 1) {
             if (rows[0].status_verif == 0) {
-                send_verif_mail(rows[0].email, token);
+                send_verif_mail(rows[0].email, token, url);
                 res.json({status: 'Success'});
             } else {
                 res.json({status: 'Already check'});
@@ -173,6 +174,27 @@ app.get('/set_challenge', async (req, res) => {
     try {
         const connection = await pool.getConnection();
         const [rows, fields] = await connection.execute('INSERT INTO `challenge`(`TYPE`, `value`) VALUES (?, ?)', [defi_type, defi]);
+        connection.release();
+        res.json(rows);
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+app.get('/set_verif_email_completed', async (req, res) => {
+    const token = req.query.token;
+    const id = req.query.id;
+    const api_token = req.query.api_token
+    if (api_token != getenv('API_TOKEN'))
+        return res.status(700).json({ error: 'Wrong api token' });
+    if ((token === undefined || id === undefined)) {
+        return res.status(400).json({ error: 'Check the urls parameters' });
+    }
+
+    try {
+        const connection = await pool.getConnection();
+        const [rows, fields] = await connection.execute('UPDATE `users` SET `status_verif` = ? WHERE `users`.`id` = ?', [1, id]);
         connection.release();
         res.json(rows);
     } catch (error) {

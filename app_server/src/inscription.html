@@ -35,7 +35,7 @@
                 var password = document.getElementById('pass').value;
                 var pseudo = document.getElementById('pseudo').value;
                 if (email != "" && password != "" && pseudo != "") {
-                    socket.emit("create_user", {token : token, email : email, password : password, pseudo : pseudo});
+                    socket.emit("create_user", {token : token, email : email, password : password, pseudo : pseudo, server : window.location.hostname});
                 } else {
                     document.getElementById('error').innerHTML = "Fill all inputs";
                 }

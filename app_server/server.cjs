@@ -42,10 +42,42 @@ app.get("/account", (req, res) => {
     res.sendFile(__dirname + "/src/account.html");
 })
 
-
 app.get("/build/css/main.css", (req, res) => {
     res.sendFile(__dirname + "/src/build/css/main.css");
 })
+
+app.get("/check_account", (req, res) => {
+    var token = req.query.token
+
+    if (token === undefined) {
+        res.redirect('/');
+        return;
+    } else {
+        get_pseudo_from_api_with_token(token)
+        .then(info => {
+            if (Object.keys(info).length == 1) {
+                set_challenge_completed(token, info[0].id);
+            }
+        })
+        .catch(error => {
+            console.log(error);
+        });
+        res.redirect('/');
+    }
+})
+
+async function set_challenge_completed(token, id) {
+    try {
+        const response = await fetch('http://api_js:8080/set_verif_email_completed?token='+token+'&id='+id+'&api_token='+getenv('API_TOKEN'));
+        if (!response.ok) {
+            throw new Error('Failed to fetch data');
+        }
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
 
 async function get_user_from_api(mail) {
     try {
@@ -73,9 +105,9 @@ async function get_pseudo_from_api_with_token(token) {
     }
 }
 
-async function send_mail_verif(token) {
+async function send_mail_verif(token, url) {
     try {
-        const response = await fetch('http://api_js:8080/send_verif_mail?token='+token+'&api_token='+getenv('API_TOKEN'));
+        const response = await fetch('http://api_js:8080/send_verif_mail?token='+token+'&server='+url+'&api_token='+getenv('API_TOKEN'));
         if (!response.ok) {
             throw new Error('Failed to fetch data');
         }
@@ -178,7 +210,7 @@ io.on("connection", (socket) => {
                         var hash_token = bcrypt.hashSync(data.token, salt);
                         set_new_user_api(data.email, data.pseudo, hash_pass, hash_token)
                         .then (info => {
-                            send_mail_verif(hash_token)
+                            send_mail_verif(hash_token, data.server)
                             .then(into => {
                                 io.emit("anwser_bdd_account :"+data.token, {status : "success", token : hash_token});
                             }).catch(error => {
