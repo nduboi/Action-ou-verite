@@ -160,6 +160,7 @@ app.get('/set_challenge', async (req, res) => {
     const type = req.query.type;
     const token = req.query.token;
     const api_token = req.query.api_token
+
     if (api_token != getenv('API_TOKEN'))
         return res.status(700).json({ error: 'Wrong api token' });
     if ((defi === undefined || type === undefined || token === undefined) && (type != 1 && type != 2)) {

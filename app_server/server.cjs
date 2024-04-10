@@ -157,16 +157,29 @@ async function set_new_user_api(email, pseudo, password, token) {
     }
 }
 
+async function create_challenge_api(defi, type, token) {
+    const response = await fetch('http://api_js:8080/set_challenge?defi='+defi+'&type='+type+'&token='+token+'&api_token='+getenv('API_TOKEN'));
+    if (!response.ok) {
+        throw new Error('Failed to fetch data');
+    }
+    const data = await response.json();
+    return data;
+}
+
 async function set_new_challenge_api(defi, type, token) {
     try {
-        const response = await fetch('http://api_js:8080/set_challenge?defi='+defi+'&type='+type+'&token='+token+'&api_token='+getenv('API_TOKEN'));
-        if (!response.ok) {
-            throw new Error('Failed to fetch data');
+        const info = await get_pseudo_from_api_with_token(token);
+        if (Object.keys(info).length === 1) {
+            if (info[0].status_verif == 1) {
+                return create_challenge_api(defi, type, token);
+            } else {
+                throw new Error('Email not verified');
+            }
+        } else {
+            throw new Error('No account found');
         }
-        const data = await response.json();
-        return data;
     } catch (error) {
-        console.error('Error:', error);
+        throw new Error(error.message);
     }
 }
 
@@ -244,7 +257,7 @@ io.on("connection", (socket) => {
                 socket.emit("awnser_server_data_challenge :"+data.token, {status : "success"})
             })
             .catch(error => {
-                socket.emit("awnser_server_data_challenge :"+data.token, {status : "error", message : "There is a error with the data"})
+                socket.emit("awnser_server_data_challenge :"+data.token, {status : "error", message : error.message})
             });
         }
     });

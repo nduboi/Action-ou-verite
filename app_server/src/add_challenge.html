@@ -62,7 +62,7 @@
             document.getElementById('defi').value = "";
             console.log(txt);
             if ((typeof txt === "string" && txt.length === 0) || txt == null) {
-                document.getElementById('confirmation').innerHTML = "<p class=\"text-red-400 text-xl font-bold\">Challenge vide !</p>"
+                document.getElementById('confirmation').innerHTML = "<p class=\"text-red-600 text-xl font-bold\">Empty challenge</p>"
             }
             else {
                 socket.emit("send_data_add_challenge", {type : choice, defi : txt, token : token});
@@ -73,7 +73,7 @@
                 if (data.status == "success") {
                     document.getElementById('confirmation').innerHTML = "<p class=\"text-green-400 text-xl font-bold\">Challenge created !</p>"
                 } else {
-                    document.getElementById('confirmation').innerHTML = "<p class=\"text-red-400 text-xl font-bold\">Error</p>"
+                    document.getElementById('confirmation').innerHTML = "<p class=\"text-red-600 text-xl font-bold\">"+data.message+"</p>"
                 }
             });
         }
