@@ -48,7 +48,7 @@ MYSQL_HOST=(database_service) by default db
 docker-compose up -d
 ```
 
-Go to this website http://localhost:8083
+Go to this website http://localhost:80
 
 ## Requirements
 
