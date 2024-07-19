@@ -1,5 +1,5 @@
 # Action ou verité by nduboi ⛵
-Project Personel  
+Projet Personel  
 ## Download 💾
 
 To download the game you need to do this command
