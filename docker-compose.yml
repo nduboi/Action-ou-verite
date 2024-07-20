@@ -3,7 +3,7 @@ services:
 
   app_js:
     build: ./app_server
-    container_name: app_js
+    container_name: truthordare
     ports:
       - "80:80"
     volumes:
@@ -21,7 +21,7 @@ services:
 
   api_js:
     build: ./api_server
-    container_name: api_js
+    container_name: truthordare_api
     volumes:
       - ./api_server:/app_api
     ports:
