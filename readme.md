@@ -26,7 +26,7 @@ docker-compose up -d
 
 Go to this website: http://localhost:8001
 
-## Play fast:
+## Play fast :video_game:
 
 Go to this platform and log in with your Docker Hub account:
 
