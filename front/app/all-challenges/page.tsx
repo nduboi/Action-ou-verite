@@ -16,7 +16,7 @@ export default function AllChallenges() {
 
   useEffect(() => {
     setChallenges([])
-    fetch("http://localhost:8002/getAllChallenge")
+    fetch("/api/getAllChallenge")
       .then((response) => response.json())
       .then((data) => setChallenges(data))
       .catch((error) => console.error("Error fetching challenges:", error))
