@@ -5,11 +5,8 @@ services:
     container_name: truthordare
     ports:
       - "${APP_PORT}:3000"
-    volumes:
-      - ./front:/app
     env_file:
       - db_log.env
-      - mail.env
       - pma.env
       - api_token.env
     depends_on:
@@ -21,13 +18,10 @@ services:
   api_js:
     build: ./api_server
     container_name: truthordare_api
-    volumes:
-      - ./api_server:/app_api
     ports:
       - "${API_PORT}:8080"
     env_file:
       - db_log.env
-      - mail.env
       - pma.env
       - api_token.env
     depends_on:

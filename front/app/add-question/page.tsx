@@ -14,7 +14,7 @@ export default function AddQuestion() {
   const [challenge, setChallenge] = useState("")
   const [type, setType] = useState<"1" | "2">("1")
   const router = useRouter()
-
+  const [token, setToken] = useState<string | null>(null);
 
   const checkToken = async (token: string | null) => {
     try {
@@ -36,10 +36,11 @@ export default function AddQuestion() {
       router.push("/login")
     }
   }
-  const token = sessionStorage.getItem("Token")
-
+  
   useEffect(() => {
-    checkToken(token);
+    const storedToken = sessionStorage.getItem("Token");
+    setToken(storedToken);
+    checkToken(storedToken);
   }, [router])
 
   const handleSubmit = async (e: React.FormEvent) => {

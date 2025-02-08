@@ -13,15 +13,8 @@ cd Action-ou-verite
 
 ### You need to create 4 files :
 
-First a file named : mail.env you need to fill with your informations
-```env
-MAIL_HOST=STMP_SERVER
-MAIL_ADRESS=Email_adress
-MAIL_PASSWORD=App_password
-MAIL_PORT=STMP_PORT
-```
 
-Second file named : pma.env you need to fill with your informations
+First file named : pma.env you need to fill with your informations
 ```env
 PMA_HOST=(database_service) by default db
 PMA_PORT=(database_port) by default 3306
@@ -30,7 +23,6 @@ PMA_PORT=(database_port) by default 3306
 Next file named : api_token.env you need to fill with secured informations
 This token will be use to secured the communication btw the api and the server
 ```env
-API_TOKEN=(secure_token)
 SECRET_KEY_JWT=(secure_token)
 ```
 
