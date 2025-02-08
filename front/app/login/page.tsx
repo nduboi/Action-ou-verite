@@ -15,7 +15,7 @@ export default function Login() {
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault()
 
-    fetch("http://localhost:8002/login", {
+    fetch("/api/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

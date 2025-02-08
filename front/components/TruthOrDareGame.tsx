@@ -55,7 +55,7 @@ export default function TruthOrDareGame() {
     } else {
       params = 2;
     }
-    fetch(`http://localhost:8002/getChallenge?type=${params}`, {
+    fetch(`/api/getChallenge?type=${params}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

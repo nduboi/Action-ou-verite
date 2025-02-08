@@ -18,7 +18,7 @@ export default function AddQuestion() {
 
   const checkToken = async (token: string | null) => {
     try {
-      const response = await fetch("http://localhost:8002/checkToken", {
+      const response = await fetch("/api/checkToken", {
         method: "GET",
         headers: {
           "Authorization": `${token}`,
@@ -57,7 +57,7 @@ export default function AddQuestion() {
       try {
         let token = sessionStorage.getItem("Token");
         console.log("Token:", token)
-        const response = await fetch("http://localhost:8002/addChallenge", {
+        const response = await fetch("/api/addChallenge", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

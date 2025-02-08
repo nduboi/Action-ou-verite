@@ -65,6 +65,7 @@ services:
 
 networks:
   result-tier:
+    driver: bridge
 
 volumes:
   db-data:
