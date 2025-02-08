@@ -5,10 +5,9 @@ services:
     image: nduuboi/truthordare:latest
     container_name: truthordare
     ports:
-      - "80:80"
+      - "${APP_PORT}:3000"
     env_file:
       - db_log.env
-      - mail.env
       - pma.env
       - api_token.env
     depends_on:
@@ -21,11 +20,8 @@ services:
   api_js:
     image: nduuboi/truthordareapi:latest
     container_name: truthordare_api
-    ports:
-      - "8080:8080"
     env_file:
       - db_log.env
-      - mail.env
       - pma.env
       - api_token.env
     depends_on:
