@@ -1,5 +1,6 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
+import { Pencil } from "lucide-react"
 
 export default function Home() {
   return (
@@ -48,6 +49,12 @@ export default function Home() {
               <line x1="23" y1="11" x2="17" y2="11" />
             </svg>
             Register
+          </Button>
+        </Link>
+        <Link href="/add-question" className="block">
+          <Button className="w-full text-lg bg-purple-500 hover:bg-purple-600">
+            <Pencil className="w-5 h-5 mr-2" />
+            Ajouter un Défi
           </Button>
         </Link>
         <Link href="/all-challenges" className="block">
