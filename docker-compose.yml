@@ -1,13 +1,12 @@
-version: '3.0'
 services:
 
   app_js:
-    build: ./app_server
+    build: ./front
     container_name: truthordare
     ports:
-      - "${APP_PORT}:80"
+      - "${APP_PORT}:3000"
     volumes:
-      - ./app_server:/app_app
+      - ./front:/app
     env_file:
       - db_log.env
       - mail.env

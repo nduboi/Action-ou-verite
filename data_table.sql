@@ -8,7 +8,7 @@
 -- PHP Version: 8.2.16
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-START TRANSACTION;
+START TRANSACTION; -- Fixed typo here
 SET time_zone = "+00:00";
 
 
@@ -31,6 +31,7 @@ CREATE TABLE `challenge` (
   `id` int NOT NULL,
   `TYPE` varchar(255) NOT NULL,
   `value` varchar(255) NOT NULL,
+  `username` varchar(255) NOT NULL,
   `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
@@ -47,12 +48,35 @@ ALTER TABLE `challenge`
 --
 -- AUTO_INCREMENT for dumped tables
 --
-
 --
 -- AUTO_INCREMENT for table `challenge`
 --
 ALTER TABLE `challenge`
   MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
+
+--
+-- Insert default values into `challenge`
+--
+INSERT INTO `challenge` (`TYPE`, `value`, `username`, `date`) VALUES
+('veritee', 'What is your biggest fear?', 'system', CURRENT_TIMESTAMP),
+('action', 'Do 10 push-ups.', 'system', CURRENT_TIMESTAMP),
+('veritee', 'What is your biggest dream?', 'system', CURRENT_TIMESTAMP),
+('action', 'Sing a song in front of everyone.', 'system', CURRENT_TIMESTAMP),
+('veritee', 'What is your biggest regret?', 'system', CURRENT_TIMESTAMP),
+('action', 'Imitate an animal of your choice for 30 seconds.', 'system', CURRENT_TIMESTAMP),
+('veritee', 'What is the craziest thing you have ever done?', 'system', CURRENT_TIMESTAMP),
+('action', 'Send an embarrassing message to the last person you texted.', 'system', CURRENT_TIMESTAMP),
+('veritee', 'What secret have you never told anyone?', 'system', CURRENT_TIMESTAMP),
+('action', 'Wear your clothes backwards for a day.', 'system', CURRENT_TIMESTAMP),
+('veritee', 'What is your greatest talent?', 'system', CURRENT_TIMESTAMP),
+('action', 'Dress up as your favorite superhero for a day.', 'system', CURRENT_TIMESTAMP),
+('veritee', 'What is your favorite book?', 'system', CURRENT_TIMESTAMP),
+('action', 'Share an interesting fact about yourself.', 'system', CURRENT_TIMESTAMP),
+('veritee', 'What are three words that describe you?', 'system', CURRENT_TIMESTAMP),
+('action', 'Do a dance for 30 seconds.', 'system', CURRENT_TIMESTAMP),
+('veritee', 'What is your favorite movie?', 'system', CURRENT_TIMESTAMP),
+('action', 'Tell a joke that makes everyone laugh.', 'system', CURRENT_TIMESTAMP);
+
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
@@ -66,7 +90,7 @@ CREATE TABLE `users` (
   `id` int NOT NULL,
   `email` varchar(255) NOT NULL,
   `status_verif` int NOT NULL DEFAULT '0',
-  `pseudo` varchar(255) NOT NULL,
+  `username` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL,
   `token` varchar(255) NOT NULL,
   `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP

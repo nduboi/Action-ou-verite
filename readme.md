@@ -31,6 +31,7 @@ Next file named : api_token.env you need to fill with secured informations
 This token will be use to secured the communication btw the api and the server
 ```env
 API_TOKEN=(secure_token)
+SECRET_KEY_JWT=(secure_token)
 ```
 
 Finally file named db_log.env you need to fill with your informations
