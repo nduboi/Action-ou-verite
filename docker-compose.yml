@@ -18,8 +18,6 @@ services:
   api_js:
     build: ./api_server
     container_name: truthordare_api
-    ports:
-      - "${API_PORT}:8080"
     env_file:
       - db_log.env
       - pma.env
