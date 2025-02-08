@@ -13,15 +13,7 @@ cd Action-ou-verite
 
 ### You need to modify 2 files :
 
-First a file named : mail.env you need to fill with your informations you can use your gmail account to fill this informations
-```env
-MAIL_HOST=STMP_SERVER
-MAIL_ADRESS=Email_adress
-MAIL_PASSWORD=App_password
-MAIL_PORT=STMP_PORT
-```
-
-Next file named : api_token.env you need to fill with secured informations
+Create a file named : api_token.env you need to fill with secured informations
 This token will be use to secured the communication btw the api and the server
 ```env
 API_TOKEN=(secure_token)
