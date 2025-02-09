@@ -1,0 +1,12 @@
+apiVersion: v1
+data:
+  MYSQL_DATABASE: name
+  MYSQL_HOST: db
+  MYSQL_PASSWORD: password
+  MYSQL_ROOT_PASSWORD: password
+  MYSQL_USER: username
+kind: ConfigMap
+metadata:
+  labels:
+    io.kompose.service: api-js-db-log-env
+  name: db-log-env

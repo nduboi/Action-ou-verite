@@ -1,0 +1,83 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.35.0 (9532ceef3)
+  labels:
+    io.kompose.service: db
+  name: db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: db
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert
+        kompose.version: 1.35.0 (9532ceef3)
+      labels:
+        io.kompose.service: db
+    spec:
+      containers:
+        - env:
+            - name: MYSQL_DATABASE
+              valueFrom:
+                configMapKeyRef:
+                  key: MYSQL_DATABASE
+                  name: db-log-env
+            - name: MYSQL_HOST
+              valueFrom:
+                configMapKeyRef:
+                  key: MYSQL_HOST
+                  name: db-log-env
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  key: MYSQL_PASSWORD
+                  name: db-log-env
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  key: MYSQL_ROOT_PASSWORD
+                  name: db-log-env
+            - name: MYSQL_USER
+              valueFrom:
+                configMapKeyRef:
+                  key: MYSQL_USER
+                  name: db-log-env
+          image: mysql:latest
+          livenessProbe:
+            exec:
+              command:
+                - mysqladmin
+                - ping
+                - -h
+                - localhost
+            failureThreshold: 30
+            periodSeconds: 2
+            timeoutSeconds: 1
+          name: database
+          ports:
+            - containerPort: 3306
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /docker-entrypoint-initdb.d/setup.sql
+              name: db-cm0
+              subPath: setup.sql
+            - mountPath: /var/lib/mysql
+              name: db-data
+      restartPolicy: Always
+      volumes:
+        - configMap:
+            items:
+              - key: data_table.sql
+                path: setup.sql
+            name: db-cm0
+          name: db-cm0
+        - name: db-data
+          persistentVolumeClaim:
+            claimName: db-data

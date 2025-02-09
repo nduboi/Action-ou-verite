@@ -13,7 +13,7 @@ cd Action-ou-verite
 
 ### You need to modify one file:
 
-Create a file named `api_token.env` and fill it with secure information. This token will be used to secure the communication between the API and the server.
+Create a file named `api-token.env` and fill it with secure information. This token will be used to secure the communication between the API and the server.
 ```env
 SECRET_KEY_JWT=(secure_token)
 ```
@@ -35,7 +35,7 @@ https://labs.play-with-docker.com/
 Run this command:
 ```bash
 git clone https://github.com/nduboi/Truth-or-Dare.git && cd Truth-or-Dare
-echo SECRET_KEY_JWT=default > api_token.env
+echo SECRET_KEY_JWT=default > api-token.env
 docker-compose up 
 ```
 
