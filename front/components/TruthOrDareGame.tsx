@@ -10,14 +10,14 @@ import { useRouter } from "next/navigation"
 
 type Player = {
   name: string
-  gender: "male" | "female"
+  gender: "Homme" | "Femme"
 }
 
 type GameState = "setup" | "playing" | "finished"
 
 export default function TruthOrDareGame() {
   const [players, setPlayers] = useState<Player[]>([])
-  const [newPlayer, setNewPlayer] = useState<Player>({ name: "", gender: "female" })
+  const [newPlayer, setNewPlayer] = useState<Player>({ name: "", gender: "Femme" })
   const [gameState, setGameState] = useState<GameState>("setup")
   const [currentPlayer, setCurrentPlayer] = useState<Player | null>(null)
   const [challengeType, setChallengeType] = useState<"truth" | "dare" | null>(null)
@@ -28,7 +28,7 @@ export default function TruthOrDareGame() {
   const addPlayer = () => {
     if (newPlayer.name) {
       setPlayers([...players, newPlayer])
-      setNewPlayer({ name: "", gender: "female" })
+      setNewPlayer({ name: "", gender: "Femme" })
     }
   }
 
@@ -89,34 +89,34 @@ export default function TruthOrDareGame() {
     return (
       <Card className="w-full max-w-md mx-auto">
         <CardHeader>
-          <CardTitle>Add Players</CardTitle>
+          <CardTitle>Ajouter des Joueurs</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
             <Input
               type="text"
-              placeholder="Player name"
+              placeholder="Nom du joueur"
               value={newPlayer.name}
               onChange={(e) => setNewPlayer({ ...newPlayer, name: e.target.value })}
             />
             <RadioGroup
               value={newPlayer.gender}
-              onValueChange={(value) => setNewPlayer({ ...newPlayer, gender: value as "male" | "female" })}
+              onValueChange={(value) => setNewPlayer({ ...newPlayer, gender: value as "Homme" | "Femme" })}
             >
               <div className="flex items-center space-x-2">
-                <RadioGroupItem value="female" id="female" />
-                <Label htmlFor="female">Female</Label>
+                <RadioGroupItem value="Femme" id="Femme" />
+                <Label htmlFor="Femme">Femme</Label>
               </div>
               <div className="flex items-center space-x-2">
-                <RadioGroupItem value="male" id="male" />
-                <Label htmlFor="male">Male</Label>
+                <RadioGroupItem value="Homme" id="Homme" />
+                <Label htmlFor="Homme">Homme</Label>
               </div>
             </RadioGroup>
             <Button onClick={addPlayer} className="w-full">
-              Add Player
+              Ajouter un Joueur
             </Button>
             <div className="mt-4">
-              <h3 className="font-semibold mb-2">Players:</h3>
+              <h3 className="font-semibold mb-2">Joueurs :</h3>
               <ul>
                 {players.map((player, index) => (
                   <li key={index}>
@@ -126,13 +126,13 @@ export default function TruthOrDareGame() {
               </ul>
             </div>
             <Button onClick={() => router.push("/add-question")} className="w-full mt-2">
-              Add New Question
+              Ajouter une Nouvelle Question
             </Button>
             <Button onClick={startGame} className="w-full" disabled={players.length < 2}>
-              Start Game
+              Démarrer le Jeu
             </Button>
             <Button onClick={returnToHub} className="w-full" variant="outline">
-              Return to Hub
+              Retour au Menu
             </Button>
           </div>
         </CardContent>
@@ -144,12 +144,12 @@ export default function TruthOrDareGame() {
     return (
       <Card className="w-full max-w-md mx-auto">
         <CardHeader>
-          <CardTitle>Game Over</CardTitle>
+          <CardTitle>Fin du Jeu</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-lg mb-4">You've completed 20 questions!</p>
+          <p className="text-lg mb-4">Vous avez complété 20 questions !</p>
           <Button onClick={returnToHub} className="w-full">
-            Return to Hub
+            Retour au Menu
           </Button>
         </CardContent>
       </Card>
@@ -159,29 +159,29 @@ export default function TruthOrDareGame() {
   return (
     <Card className="w-full max-w-md mx-auto">
       <CardHeader>
-        <CardTitle>{currentPlayer ? `${currentPlayer.name}'s Turn` : "Choose a Player"}</CardTitle>
+        <CardTitle>{currentPlayer ? `Le joueur sélectionné est ${currentPlayer.name}` : "Choisir un Joueur"}</CardTitle>
         <p className="text-sm text-gray-500">Question {questionCount + 1} of 20</p>
       </CardHeader>
       <CardContent>
         {!challengeType ? (
           <div className="space-y-4">
-            <Button onClick={() => selectChallengeType("truth")} className="w-full">
-              Truth (Veritée)
-            </Button>
             <Button onClick={() => selectChallengeType("dare")} className="w-full">
-              Dare (Action)
+              Action
+            </Button>
+            <Button onClick={() => selectChallengeType("truth")} className="w-full">
+              Verité
             </Button>
           </div>
         ) : (
           <div className="space-y-4">
             <p className="text-lg font-semibold">{challenge}</p>
             <Button onClick={nextTurn} className="w-full">
-              Next Turn
+              Prochain tour
             </Button>
           </div>
         )}
         <Button onClick={returnToHub} className="w-full mt-4" variant="outline">
-          End Game and Return to Hub
+          Terminer le jeu et retourner au menu
         </Button>
       </CardContent>
     </Card>

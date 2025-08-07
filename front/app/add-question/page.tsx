@@ -27,7 +27,7 @@ export default function AddQuestion() {
       if (response.status !== 200) {
         toast({
           title: "Erreur",
-          description: "You need to be logged in to access this page.",
+          description: "Vous devez être connecté pour accéder à cette page.",
         })
         router.push("/login")
       }

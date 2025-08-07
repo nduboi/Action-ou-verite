@@ -29,15 +29,15 @@ export default function Register() {
 
       if (res.status !== 200) {
         toast({
-          title: "Register Failed",
+          title: "Inscription échouée",
           description: responseBody.error,
         })
         return
       }
 
       toast({
-        title: "Register Successful",
-        description: "You have been registered successfully.",
+        title: "Inscription réussie",
+        description: "Vous avez été inscrit avec succès.",
       })
 
       sessionStorage.setItem("Token", responseBody.token)
@@ -45,8 +45,8 @@ export default function Register() {
     } catch (error) {
       console.error("Error during registration:", error)
       toast({
-        title: "Register Failed",
-        description: "An unexpected error occurred.",
+        title: "Inscription échouée",
+        description: "Une erreur inattendue s'est produite.",
       })
     }
   }
@@ -55,34 +55,34 @@ export default function Register() {
     <div className="min-h-screen bg-gradient-to-b from-red-600 to-red-800 flex items-center justify-center">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle className="text-2xl text-center">Register</CardTitle>
+          <CardTitle className="text-2xl text-center">Inscription</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleRegister} className="space-y-4">
-            <Input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+            <Input type="email" placeholder="E-mail" value={email} onChange={(e) => setEmail(e.target.value)} required />
             <Input
               type="password"
-              placeholder="Password"
+              placeholder="Mot de passe"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
             />
             <Input
               type="text"
-              placeholder="username"
+              placeholder="Nom d'utilisateur"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               required
             />
             <Button type="submit" className="w-full">
-              Register
+              Inscription
             </Button>
           </form>
           <Button onClick={() => router.push("/login")} className="w-full mt-2" variant="outline">
-            Already have an account? Login
+            Vous avez déjà un compte ?
           </Button>
           <Button onClick={() => router.push("/")} className="w-full mt-4" variant="secondary">
-            Return to Hub
+            Retour au Menu
           </Button>
         </CardContent>
       </Card>

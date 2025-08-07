@@ -37,8 +37,8 @@ export default function Login() {
         if (data === null)
           return
         toast({
-          title: "Login Successful",
-          description: "You have been logged in successfully.",
+          title: "Connexion réussie",
+          description: "Vous êtes maintenant connecté.",
         })
         sessionStorage.setItem("Token", data.token)
         router.push("/add-question")
@@ -46,8 +46,8 @@ export default function Login() {
       .catch((error) => {
         console.error("Error during login:", error)
         toast({
-          title: "Login Failed",
-          description: "An error occurred. Please try again.",
+          title: "Échec de la connexion",
+          description: "Une erreur s'est produite. Veuillez réessayer.",
         })
       })
   }
@@ -56,26 +56,26 @@ export default function Login() {
     <div className="min-h-screen bg-gradient-to-b from-red-600 to-red-800 flex items-center justify-center">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle className="text-2xl text-center">Login</CardTitle>
+          <CardTitle className="text-2xl text-center">Connexion</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleLogin} className="space-y-4">
             <Input
               type="email"
-              placeholder="Email"
+              placeholder="E-mail"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
             />
             <Input
               type="password"
-              placeholder="Password"
+              placeholder="Mot de passe"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
             />
             <Button type="submit" className="w-full">
-              Login
+              Connexion
             </Button>
           </form>
           <Button
@@ -83,14 +83,14 @@ export default function Login() {
             className="w-full mt-2"
             variant="outline"
           >
-            Don't have an account? Register
+            Vous n'avez pas de compte ?
           </Button>
           <Button
             onClick={() => router.push("/")}
             className="w-full mt-4"
             variant="secondary"
           >
-            Return to Hub
+            Retour au Menu
           </Button>
         </CardContent>
       </Card>

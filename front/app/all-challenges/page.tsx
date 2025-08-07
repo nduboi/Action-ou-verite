@@ -70,7 +70,7 @@ export default function AllChallenges() {
               </div>
             ) : (
               <div className="flex items-center justify-center h-full">
-                <p className="text-gray-500 text-lg">No challenges</p>
+                <p className="text-gray-500 text-lg">Aucun Challenge</p>
               </div>
             )}
           </ScrollArea>

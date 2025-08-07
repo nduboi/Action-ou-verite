@@ -6,8 +6,8 @@ import { Toaster } from "@/components/ui/toaster" // Import the Toaster componen
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata = {
-  title: "Truth or Dare Game",
-  description: "A modern Truth or Dare game built with Next.js and React",
+  title: "Action ou Vérité",
+  description: "Un jeu moderne d'Action ou Vérité construit avec Next.js et React",
 }
 
 export default function RootLayout({
