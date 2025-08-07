@@ -166,10 +166,10 @@ export default function TruthOrDareGame() {
         {!challengeType ? (
           <div className="space-y-4">
             <Button onClick={() => selectChallengeType("truth")} className="w-full">
-              Truth
+              Truth (Veritée)
             </Button>
             <Button onClick={() => selectChallengeType("dare")} className="w-full">
-              Dare
+              Dare (Action)
             </Button>
           </div>
         ) : (

@@ -47,9 +47,9 @@ module.exports = function(app, bcrypt, jwt) {
                 return false;
             }
             if (type === "1")
-                type = "action";
-            else
                 type = "veritee";
+            else
+                type = "action";
             let challenge = await getChallenge(type);
             res.status(200).json({ "value": challenge });
         } catch (error) {
